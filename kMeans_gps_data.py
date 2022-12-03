@@ -17,6 +17,9 @@ path0 = glob.glob("E:/pyhton/psd/*")
 a1 = []
 a2 = []
 a3 = []
+n1 = []
+n2 = []
+n3 = []
 for f in path0:
     print(f)
     path = glob.glob(f+"/gps/*"+".csv")
@@ -24,7 +27,11 @@ for f in path0:
     lats = 0.0
     lngs = 0.0
     alts = 0.0
+    lats_n = 0.0
+    lngs_n = 0.0
+    alts_n = 0.0
     i = 0
+    j = 0
     for file in path:
         #print(file)
         data = pd.read_csv(file)
@@ -33,6 +40,7 @@ for f in path0:
         lat_x = 0.0
         lng_x = 0.0
         alt_x = 0.0
+        
         t_x = 0.0
         for x in data.to_numpy():
             tl = np.fromstring(x[1].split("T")[1], dtype=float, sep=':')
@@ -45,6 +53,11 @@ for f in path0:
                     lngs += abs(x[2]-lng_x)/(t-t_x)
                     lats += abs(x[3]-lat_x)/(t-t_x)
                     alts += abs(x[4]-alt_x)/(t-t_x)
+                    if tl[0]>18:
+                        j += 1
+                        lngs_n += abs(x[2]-lng_x)/(t-t_x)
+                        lats_n += abs(x[3]-lat_x)/(t-t_x)
+                        alts_n += abs(x[4]-alt_x)/(t-t_x)
                 #1.362885744927054e-05
             lng_x = x[2]
             lat_x = x[3]
@@ -55,9 +68,20 @@ for f in path0:
         print(lngs/i)
         a2.append(lats/i)
         a3.append(alts/i)
+    if j>0:
+        n1.append(lngs_n/i)
+        print(lngs_n/i)
+        n2.append(lats_n/i)
+        n3.append(alts_n/i)
+    else:
+        n1.append(0)
+        print(0)
+        n2.append(0)
+        n3.append(0)
 
 #print(a1)
 coor = np.vstack((a1,a2,a3)).T
+coor_n = np.vstack((n1,n2,n3)).T   #for night
 
 fields = ['long','lat','alt']
 filename = "gps_summery.csv"
@@ -66,6 +90,14 @@ with open(filename, 'w') as csvfile:
         
     csvwriter.writerow(fields) 
     csvwriter.writerows(coor)
+
+fields = ['long_night','lat_night','alt_night']
+filename = "gps_night.csv"
+with open(filename, 'w') as csvfile: 
+    csvwriter = csv.writer(csvfile) 
+        
+    csvwriter.writerow(fields) 
+    csvwriter.writerows(coor_n)
 
 
 # Create a dataframe
