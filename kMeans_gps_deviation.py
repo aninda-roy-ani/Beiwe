@@ -12,55 +12,25 @@ X, t = make_swiss_roll(n_samples=1000, noise=0.2, random_state=42)
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.cluster import KMeans
 
-path0 = glob.glob("E:/pyhton/psd/*")
-#path = glob.glob("E:/pyhton/psdTest/*"+"/gps/*"+".csv")
-a1 = []
-a2 = []
-a3 = []
-for f in path0:
-    print(f)
-    path = glob.glob(f+"/gps/*"+".csv")
-    
-    lats = 0.0
-    lngs = 0.0
-    alts = 0.0
-    i = 0
-    for file in path:
-        #print(file)
-        data = pd.read_csv(file)
-        #print(data.to_numpy()[:,3])
-        
-        lat_x = 0.0
-        lng_x = 0.0
-        alt_x = 0.0
-        t_x = 0.0
-        for x in data.to_numpy():
-            tl = np.fromstring(x[1].split("T")[1], dtype=float, sep=':')
-            t = tl[0]*3600 + tl[1]*60 + tl[2]
-            if t_x != 0:
-                t_x
-            if lat_x != 0:
-                if t-t_x != 0:
-                    i += 1
-                    lngs += abs(x[2]-lng_x)/(t-t_x)
-                    lats += abs(x[3]-lat_x)/(t-t_x)
-                    alts += abs(x[4]-alt_x)/(t-t_x)
-                #1.362885744927054e-05
-            lng_x = x[2]
-            lat_x = x[3]
-            alt_x = x[4]
-            t_x = t
-    if i>0:
-        a1.append(lngs/i)
-        print(lngs/i)
-        a2.append(lats/i)
-        a3.append(alts/i)
+data = pd.read_csv("gps_summery.csv")
+print(data)
+print(" ")
 
-#print(a1)
-coor = np.vstack((a1,a2,a3)).T
+data = data.to_numpy()
+print(data)
+print(" ")
 
-fields = ['long','lat','alt']
-filename = "gps_summery.csv"
+mean_data = np.mean(data, axis=0)
+print(mean_data)
+print(" ")
+
+data = data - mean_data
+print(data)
+
+coor = np.vstack((data[:,0],data[:,1],data[:,2])).T
+
+fields = ['long_devi','lat_devi','alt_devi']
+filename = "gps_deviation.csv"
 with open(filename, 'w') as csvfile: 
     csvwriter = csv.writer(csvfile) 
         
@@ -69,7 +39,7 @@ with open(filename, 'w') as csvfile:
 
 
 # Create a dataframe
-df = pd.read_csv("gps_summery.csv")
+df = pd.read_csv("gps_deviation.csv")
 #df = pd.DataFrame(dt, fields)
 print(df.to_numpy())
 X = df.to_numpy()
@@ -97,3 +67,4 @@ ax.legend()
 plt.show()
 
 # %%
+
