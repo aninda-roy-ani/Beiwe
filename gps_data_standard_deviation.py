@@ -29,50 +29,89 @@ def standard_deviation( anyArr ):
 
     return pow((anyArrValSum/anyArr.size),0.5)
 
-directory = "E:/Beiwe Data/"
-#directory = "E:/pyhton/psdTest/"
+directory = "E:/BeiweData/"
 px_List = [f.name for f in os.scandir(directory) if f.is_dir()]
 
 ind = 0
 
-path0 = glob.glob("E:/Beiwe Data/*")
-#path0 = glob.glob("E:/pyhton/psdTest/*")
+path0 = glob.glob("E:/BeiweData/*")
 for file0 in path0 :
 # into each participant's data (gps)
 
-    latitudeSD = []
-    longitudeSD = []
-    altitudeSD = []
+    file_count = len(file0)
+    if file_count > 0 :
 
-    i = 0
+        latitudeSD = []
+        longitudeSD = []
+        altitudeSD = []
+        dates = []
+        
+        latitude = np.array([])
+        longitude = np.array([])
+        altitude = np.array([])
 
-    path = glob.glob(file0+"/gps/*"+".csv")
-    for file in path :
-    # into participant's gps data of each day
-        i += 1
+        i = 0
+        flag = False
+        dateX = -365
+        monthX = -12
 
-        data = pd.read_csv(file)
-        data = data.to_numpy()
+        path = glob.glob(file0+"/gps/*"+".csv")       
+        for file in path :
+        # into participant's gps data of each day hour
+        
+            if flag == False :                      
+                dateX = path[0].split("2022-")[1].split(" ")[0].split("-")[1]
+                monthX = path[0].split("2022-")[1].split(" ")[0].split("-")[0]
+                flag = True
+            date = file.split("2022-")[1].split(" ")[0].split("-")[1]
+            month = file.split("2022-")[1].split(" ")[0].split("-")[0]
+            
+            print(date)
+            if(date != dateX):
+                
+                dates.append("2022-" + str(monthX) + "-" + str(dateX))
+                
+                if altitude.size > 0 and latitude.size > 0 and longitude.size > 0 :
+                    latitudeSD.append(standard_deviation(latitude))
+                    longitudeSD.append(standard_deviation(longitude))
+                    altitudeSD.append(standard_deviation(altitude))
+                
+                latitude = np.array([])
+                longitude = np.array([])
+                altitude = np.array([])
 
-        latitude = data[:,2]
-        longitude = data[:,3]
-        altitude = data[:,4]
+            data = pd.read_csv(file)
+            data = data.to_numpy()
+            
+            latitude = np.append(latitude, data[:,2])
+            longitude = np.append(longitude, data[:,3])
+            altitude = np.append(altitude, data[:,4])
+            
+            i += 1
+            dateX = date
+            monthX = month
+            
 
-        latitudeSD.append(standard_deviation(latitude))
-        longitudeSD.append(standard_deviation(longitude))
-        altitudeSD.append(standard_deviation(altitude))
 
-    if(i==0):
-        px_List.pop(ind)
-        ind -= 1
-    else:
-        filename = "gps_standard_deviation/" + px_List[ind] + ".csv"
-        print(filename)
-        save_data_in_csvFile(['longitudeSD','latitudeSD','altitudeSD'], 
-        np.vstack((latitudeSD ,longitudeSD, altitudeSD)).T, filename)
-
-    
-    ind += 1
+        if(i==0):
+            px_List.pop(ind)
+            ind -= 1
+        else:
+            dates.append("2022-" + str(monthX) + "-" + str(dateX))
+            
+            latitudeSD.append(standard_deviation(latitude))
+            longitudeSD.append(standard_deviation(longitude))
+            altitudeSD.append(standard_deviation(altitude))
+            
+            print(dates)
+            print(longitudeSD)
+            
+            filename = "gps_standard_deviation/" + px_List[ind] + ".csv"
+            print(filename)
+            save_data_in_csvFile(['Date','longitudeSD','latitudeSD','altitudeSD'], 
+            np.vstack((dates, latitudeSD ,longitudeSD, altitudeSD)).T, filename)
+            
+        ind += 1
 
     
 
