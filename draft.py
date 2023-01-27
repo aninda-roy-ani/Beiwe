@@ -55,24 +55,26 @@ def dataFrame( column_to_drop, filename ):
 def plot_3D_KMeansClustering( dataFrame ):
 
     X = dataFrame.to_numpy()
+    print(X)
     n = number_of_clusters(dataFrame)
 
     kmeans = KMeans(n_clusters=n)
 
     kmeans = kmeans.fit(X)
+    print(kmeans)
     labels = kmeans.predict(X)
+    print(labels)
     centroids = kmeans.cluster_centers_
+    print(centroids)
 
-    fig = plt.figure()
-    ax = fig.add_subplot(projection='3d')
-    ax.scatter(centroids[:,0],centroids[:,1],centroids[:,2],c="black",s=80,label="Centers",alpha=1)
-    colorArr = np.array( ["blue", "yellow", "red", "green", "cyan", "magenta"] )
-    for i in range(n):
-        x = np.array(labels == i)
-        ax.scatter(X[x,0],X[x,1],X[x,2],c=colorArr[i],s=40,label="C"+str(i+1))
 
-    ax.legend()
-    plt.show()
+def convert_arrayToString( labels,npArr,n ):
+    clusterStringList = [''] * n
+    for i in range(n) :
+        clusterStringList[i].append()
+        
+        
+    cstr = []
 
 
 def standard_deviation( anyArr ):
@@ -89,48 +91,21 @@ def standard_deviation( anyArr ):
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
+df = pd.DataFrame({'points': [18, 23, 19, 14, 14, 11, 20, 28, 30, 31,
+                              35, 33, 29, 25, 25, 27, 29, 30, 19, 23],
+                   'assists': [3, 3, 4, 5, 4, 7, 8, 7, 6, 9, 12, 14,
+                               8, 9, 4, 3, 4, 12, 15, 11],
+                   'rebounds': [15, 14, 14, 10, 8, 14, 13, 9, 5, 4,
+                                11, 6, 5, 5, 3, 8, 12, 7, 6, 5]})
 
-index_px = 0
-
-px_longitude_sdArr = []
-px_latitude_sdArr = []
-px_altitude_sdArr = []
-
-
-dates = []
-directory = "E:/BeiweData/"
-px_List = [f.name for f in os.scandir(directory) if f.is_dir()]
-
-path0 = glob.glob("E:/pyhton/psdTest/*")
-for file0 in path0 :
-# into each participant's data (gps)
+dt = np.array([[18,3,15],[23,3,14],[19,4,14],[14,5,10],[14,4,8],[11,7,14],[20,8,13],[28,7,9],[30,6,5],[31,9,4]])
     
-    count = 0
+dta = np.array([[18, 23, 19, 14, 14, 11, 20, 28, 30, 31, 35, 33, 29, 25, 25, 27, 29, 30, 19, 23],
+              [3, 3, 4, 5, 4, 7, 8, 7, 6, 9, 12, 14, 8, 9, 4, 3, 4, 12, 15, 11],
+              [15, 14, 14, 10, 8, 14, 13, 9, 5, 4, 11, 6, 5, 5, 3, 8, 12, 7, 6, 5]])
 
-    longitudeArray = []
-    latitudeArray = []
-    altitudeArray = []
-    
-    path = glob.glob(file0+"/gps/*"+".csv")
-    for file in path :
-    # into participant's gps data of each day hour
-        
-        count += 1
-        flag = False
-        
+fields = ['long_night','lat_night','alt_night']
+dfr = (pd.DataFrame(dta, np.array(fields))).T
+print(dfr.head())
+plot_3D_KMeansClustering(dfr)
 
-        data = pd.read_csv(file)
-        data = data.to_numpy()
-        
-        date = file.split("2022-")[1].split(" ")[0].split("-")[1]
-        month = file.split("2022-")[1].split(" ")[0].split("-")[0]
-        
-        
-        
-        dated = "2022-" + str(month) + "-" + str(date)
-        print(dated)
-        dates.append("2022-" + str(month) + "-" + str(date))
-
-        print(date)
-        
-print(dates)

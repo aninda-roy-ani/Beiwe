@@ -97,10 +97,10 @@ px_latitude_sdArr = []
 px_altitude_sdArr = []
 
 
-directory = "E:/Beiwe Data/"
+directory = "E:/BeiweData/"
 px_List = [f.name for f in os.scandir(directory) if f.is_dir()]
 
-path0 = glob.glob("E:/Beiwe Data/*")
+path0 = glob.glob("E:/BeiweData/*")
 for file0 in path0 :
 # into each participant's data (gps)
     
