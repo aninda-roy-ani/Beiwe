@@ -109,3 +109,6 @@ dfr = (pd.DataFrame(dta, np.array(fields))).T
 print(dfr.head())
 plot_3D_KMeansClustering(dfr)
 
+
+                
+
