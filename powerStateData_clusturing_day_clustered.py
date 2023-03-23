@@ -23,18 +23,19 @@ frequency_day = 0
 datex = hours[0].split(" ")[0].split("-")[2]
 for i in range(len(participants)):
     date = hours[i].split(" ")[0].split("-")[2]
-    if(date == datex):
-        duration_day+=proportions[i]
-        frequency_day+=frequencies[i]
-    else:
-        participant_list.append(participants[i-1].split("/")[0])
-        date_list.append(hours[i-1].split(" ")[0])
-        duration_list.append(duration_day)
-        frequency_list.append(frequency_day)
-        duration_day = 0
-        frequency_day = 0
-        datex = date
-        i-=1
+    if(frequencies[i]>0):
+        print(frequencies[i])
+        if(date == datex):
+            duration_day+=proportions[i]
+            frequency_day+=frequencies[i]
+        else:
+            participant_list.append(participants[i-1].split("/")[0])
+            date_list.append(hours[i-1].split(" ")[0])
+            duration_list.append(duration_day)
+            frequency_list.append(frequency_day)
+            duration_day = proportions[i]
+            frequency_day = frequencies[i]
+            datex = date
 
 participant_list.append(participants[i-1].split("/")[0])
 date_list.append(hours[i-1].split(" ")[0])
