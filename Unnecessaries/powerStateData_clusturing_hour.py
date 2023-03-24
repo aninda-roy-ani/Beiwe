@@ -70,12 +70,7 @@ for file0 in path0 :
     print(index)
     index += 1
 
-whole_data = pd.read_csv("powerStateData_persons_hours.csv")
-whole_data = whole_data.to_numpy()
-proportions = whole_data[:,2]
-frequencies = whole_data[:,3]
-clusters = mod.get_clustered_data(np.vstack((proportions, frequencies)),
-    ['proportion','frequency'])
+
 
 
 
